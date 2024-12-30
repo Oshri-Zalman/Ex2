@@ -39,10 +39,23 @@ public class Ex2Sheet implements Sheet {
     @Override
     public Cell get(String cords) {
         Cell ans = null;
-        // Add your code here
 
-        /////////////////////
+        // שלב 1: המרת הקואורדינטות (כמו A1) לאינדקסים של עמודה ושורה
+        int x = getColumnIndex(cords); // המרה של העמודה (A, B, C וכו') לאינדקס
+        int y = getRowIndex(cords); // המרה של השורה (1, 2, 3 וכו') לאינדקס
+
+        // שלב 2: בדיקה אם הקואורדינטות בתוכניות הגיליון נכונות
+        if (isIn(x, y)) {
+            // אם הקואורדינטות בתוקף (הם נמצאים בתוך הטווח של הגיליון), אז נקבל את התא
+            ans = get(x, y);
+        } else {
+            // אם הקואורדינטות לא בתוקף, נשאיר ans כ-null (או אפשר להחזיר תא שגיאה)
+            ans = null;  // ניתן להחזיר תא שגיאה אם תרצה
+        }
+
+        // שלב 3: החזרת התא
         return ans;
+
     }
 
     @Override
@@ -110,4 +123,22 @@ public class Ex2Sheet implements Sheet {
         /////////////////////
         return ans;
         }
+        // my functions:
+
+    public static int getColumnIndex(String cell) {
+
+        String columnPart = cell.replaceAll("[0-9]", "");
+
+        int columnIndex = 0;
+        for (int i = 0; i < columnPart.length(); i++) {
+            char ch = columnPart.charAt(i);
+            columnIndex = columnIndex * 26 + (ch - 'A');
+        }
+        return columnIndex;
+    }
+
+    public static int getRowIndex(String cell) {
+        String rowPart = cell.replaceAll("[A-Za-z]", "");
+        return Integer.parseInt(rowPart) - 1;
+    }
 }

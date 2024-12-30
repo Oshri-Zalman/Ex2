@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Functions {
 
 
@@ -75,10 +78,8 @@ public class Functions {
         if (!isForm(form)) {
             throw new IllegalArgumentException("Invalid formula: " + form);
         }
-
         // Remove the '=' at the beginning
         String formula = form.substring(1);
-
         // Evaluate the formula
         return evaluateExpression(formula);
     }
@@ -175,5 +176,29 @@ public class Functions {
             default:
                 throw new IllegalArgumentException("Invalid operator: " + operator);
         }
+    }
+
+    // find all the depends cells of the cell (need in class Scell).
+    public static ArrayList<String> findDependentCells(String formula) {
+        ArrayList<String> dependentCells = new ArrayList<>();
+
+        // Ensure the formula starts with '='
+        if (formula == null || !formula.startsWith("=")) {
+            return dependentCells; // If not a formula, return an empty list
+        }
+
+        // Remove the '=' at the start
+        formula = formula.substring(1);
+
+        // Regex pattern to match valid cell names (e.g., A1, B2, C3)
+        Pattern cellPattern = Pattern.compile("[A-Z]+[0-9]+");
+        Matcher matcher = cellPattern.matcher(formula);
+
+        // Find all matches and add them to the list
+        while (matcher.find()) {
+            dependentCells.add(matcher.group());
+        }
+
+        return dependentCells;
     }
 }
