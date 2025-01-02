@@ -1,144 +1,183 @@
-import java.io.IOException;
-// Add your documentation below:
+import java.io.*;
+import java.util.HashSet;
 
 public class Ex2Sheet implements Sheet {
-    private Cell[][] table;
-    // Add your code here
+    private final SCell[][] table;
+    private final int width;
+    private final int height;
 
-    // ///////////////////
-    public Ex2Sheet(int x, int y) {
-        table = new SCell[x][y];
-        for(int i=0;i<x;i=i+1) {
-            for(int j=0;j<y;j=j+1) {
-                table[i][j] = new SCell("");
-            }
-        }
-        eval();
+    // Constructors
+    public Ex2Sheet(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.table = new SCell[width][height];
+        initializeTable();
     }
+
     public Ex2Sheet() {
         this(Ex2Utils.WIDTH, Ex2Utils.HEIGHT);
     }
 
-    @Override
-    public String value(int x, int y) {
-        String ans = Ex2Utils.EMPTY_CELL;
-        // Add your code here
-
-        Cell c = get(x,y);
-        if(c!=null) {ans = c.toString();}
-
-        /////////////////////
-        return ans;
-    }
-
-    @Override
-    public Cell get(int x, int y) {
-        return table[x][y];
-    }
-
-    @Override
-    public Cell get(String cords) {
-        Cell ans = null;
-
-        // שלב 1: המרת הקואורדינטות (כמו A1) לאינדקסים של עמודה ושורה
-        int x = getColumnIndex(cords); // המרה של העמודה (A, B, C וכו') לאינדקס
-        int y = getRowIndex(cords); // המרה של השורה (1, 2, 3 וכו') לאינדקס
-
-        // שלב 2: בדיקה אם הקואורדינטות בתוכניות הגיליון נכונות
-        if (isIn(x, y)) {
-            // אם הקואורדינטות בתוקף (הם נמצאים בתוך הטווח של הגיליון), אז נקבל את התא
-            ans = get(x, y);
-        } else {
-            // אם הקואורדינטות לא בתוקף, נשאיר ans כ-null (או אפשר להחזיר תא שגיאה)
-            ans = null;  // ניתן להחזיר תא שגיאה אם תרצה
+    // Initialize the table with empty cells
+    private void initializeTable() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                table[i][j] = new SCell("");
+            }
         }
+    }
 
-        // שלב 3: החזרת התא
-        return ans;
-
+    @Override
+    public boolean isIn(int x, int y) {
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
 
     @Override
     public int width() {
-        return table.length;
+        return width;
     }
+
     @Override
     public int height() {
-        return table[0].length;
-    }
-    @Override
-    public void set(int x, int y, String s) {
-        Cell c = new SCell(s);
-        table[x][y] = c;
-        // Add your code here
-
-        /////////////////////
-    }
-    @Override
-    public void eval() {
-        int[][] dd = depth();
-        // Add your code here
-
-        // ///////////////////
+        return height;
     }
 
     @Override
-    public boolean isIn(int xx, int yy) {
-        boolean ans = xx>=0 && yy>=0;
-        // Add your code here
-
-        /////////////////////
-        return ans;
+    public void set(int x, int y, String c) {
+        if (isIn(x, y)) {
+            table[x][y].setData(c);
+        }
     }
 
     @Override
-    public int[][] depth() {
-        int[][] ans = new int[width()][height()];
-        // Add your code here
-
-        // ///////////////////
-        return ans;
+    public SCell get(int x, int y) {
+        return isIn(x, y) ? table[x][y] : null;
     }
 
     @Override
-    public void load(String fileName) throws IOException {
-        // Add your code here
-
-        /////////////////////
+    public SCell get(String entry) {
+        int[] coords = parseEntry(entry);
+        return (coords != null && isIn(coords[0], coords[1])) ? table[coords[0]][coords[1]] : null;
     }
 
     @Override
-    public void save(String fileName) throws IOException {
-        // Add your code here
-
-        /////////////////////
+    public String value(int x, int y) {
+        if (isIn(x, y)) {
+            return table[x][y].evaluate(this, x, y, new HashSet<>());
+        }
+        return "ERR_Cycle";
     }
 
     @Override
     public String eval(int x, int y) {
-        String ans = null;
-        if(get(x,y)!=null) {ans = get(x,y).toString();}
-        // Add your code here
-
-        /////////////////////
-        return ans;
-        }
-        // my functions:
-
-    public static int getColumnIndex(String cell) {
-
-        String columnPart = cell.replaceAll("[0-9]", "");
-
-        int columnIndex = 0;
-        for (int i = 0; i < columnPart.length(); i++) {
-            char ch = columnPart.charAt(i);
-            columnIndex = columnIndex * 26 + (ch - 'A');
-        }
-        return columnIndex;
+        return value(x, y);
     }
 
-    public static int getRowIndex(String cell) {
-        String rowPart = cell.replaceAll("[A-Za-z]", "");
-        return Integer.parseInt(rowPart) - 1;
+    @Override
+    public void eval() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                value(i, j);
+            }
+        }
+    }
+
+    @Override
+    public int[][] depth() {
+        int[][] depths = new int[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                depths[i][j] = computeDepth(i, j, new boolean[width][height]);
+            }
+        }
+        return depths;
+    }
+
+    // Compute the depth for a specific cell
+    private int computeDepth(int x, int y, boolean[][] visited) {
+        if (!isIn(x, y) || visited[x][y]) {
+            return -1;
+        }
+
+        visited[x][y] = true;
+        SCell cell = table[x][y];
+        if (cell.getType() != SCell.FORM) {
+            return 0;
+        }
+
+        String formula = cell.getData().substring(1);
+        int maxDepth = 0;
+
+        for (String ref : parseReferences(formula)) {
+            int[] coords = parseEntry(ref);
+            if (coords != null) {
+                maxDepth = Math.max(maxDepth, 1 + computeDepth(coords[0], coords[1], visited));
+            }
+        }
+
+        visited[x][y] = false;
+        return maxDepth;
+    }
+
+    // Parse references in the formula
+    private String[] parseReferences(String formula) {
+        return formula.split("[^A-Za-z0-9]");
+    }
+
+    // Parse a cell reference to its coordinates
+    public int[] parseEntry(String entry) {
+        if (entry == null || entry.length() < 2) return null;
+
+        char column = Character.toUpperCase(entry.charAt(0));
+        String rowPart = entry.substring(1);
+
+        try {
+            int row = Integer.parseInt(rowPart);
+            int col = column - 'A';
+
+            if (col < 0 || col >= width || row < 0 || row >= height) return null;
+
+            return new int[]{col, row};
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public void save(String fileName) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write("\n");
+
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    String data = table[i][j].getData();
+                    if (!data.isEmpty()) {
+                        writer.write(i + "," + j + "," + data + "\n");
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void load(String fileName) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            reader.readLine(); // Skip header
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",", 3);
+                if (parts.length >= 3) {
+                    try {
+                        int x = Integer.parseInt(parts[0]);
+                        int y = Integer.parseInt(parts[1]);
+                        String data = parts[2];
+                        set(x, y, data);
+                    } catch (NumberFormatException e) {
+                        // Ignoring malformed lines
+                    }
+                }
+            }
+        }
     }
 }

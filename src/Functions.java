@@ -201,4 +201,52 @@ public class Functions {
 
         return dependentCells;
     }
+    public static void evaluateCell(Cell cell, Sheet sheet) {
+        if (cell.getType() == Ex2Utils.FORM) {
+            try {
+                // חישוב נוסחה על סמך התאים התלויים
+                String result = computeCellFormula(cell.getData(), sheet);
+                cell.setData(result);
+                cell.setType(Ex2Utils.NUMBER);
+            } catch (Exception e) {
+                cell.setType(Ex2Utils.ERR_FORM_FORMAT); // טיפול בשגיאה בנוסחה
+            }
+        }
+    }
+    public static String computeCellFormula(String formula, Sheet sheet) {
+        if (!isForm(formula)) {
+            throw new IllegalArgumentException("Invalid formula: " + formula);
+        }
+
+        // הסרת ה- "=" בתחילת הנוסחה
+        formula = formula.substring(1);
+
+        // המרה של תאים תלויים לערכים
+        ArrayList<String> dependentCells = findDependentCells(formula);
+        for (String cellRef : dependentCells) {
+            Cell dependentCell = sheet.get(cellRef);
+            if (dependentCell != null && Functions.isNumber(dependentCell.getData())) {
+                formula = formula.replace(cellRef, dependentCell.getData());
+            } else {
+                throw new IllegalArgumentException("Invalid or missing dependent cell: " + cellRef);
+            }
+        }
+
+        // חישוב ערך הנוסחה
+        return Double.toString(evaluateExpression(formula));
+    }
+    public static ArrayList<Cell> getDependencies(Cell cell, Sheet sheet) {
+        ArrayList<Cell> dependencies = new ArrayList<>();
+        if (cell.getType() == Ex2Utils.FORM) {
+            ArrayList<String> dependentCells = findDependentCells(cell.getData());
+            for (String cellRef : dependentCells) {
+                Cell dependentCell = sheet.get(cellRef);
+                if (dependentCell != null) {
+                    dependencies.add(dependentCell);
+                }
+            }
+        }
+        return dependencies;
+    }
+
 }
