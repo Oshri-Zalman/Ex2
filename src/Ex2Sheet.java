@@ -132,13 +132,20 @@ public class Ex2Sheet implements Sheet {
         String rowPart = entry.substring(1);
 
         try {
-            int row = Integer.parseInt(rowPart);
+            int row = Integer.parseInt(rowPart) ;
             int col = column - 'A';
 
-            if (col < 0 || col >= width || row < 0 || row >= height) return null;
+            // הוספת הדפסת דיבאג
+            System.out.println("Parsing entry: " + entry + " to coordinates: [" + col + "," + row + "]");
+
+            if (col < 0 || col >= width || row < 0 || row >= height) {
+                System.out.println("Invalid coordinates detected");
+                return null;
+            }
 
             return new int[]{col, row};
         } catch (NumberFormatException e) {
+            System.out.println("Failed to parse row number: " + rowPart);
             return null;
         }
     }

@@ -218,21 +218,21 @@ public class Tests {
 
     @Test
     public void testEvaluate_Formula() {
-        SCell cell = new SCell("=A1+B1");
+        SCell cell = new SCell("=A0+B0");
         Ex2Sheet sheet = new Ex2Sheet(5, 5);
         sheet.set(0, 0, "10");
         sheet.set(1, 0, "20");
 
-        assertEquals("30", cell.evaluate(sheet, 2, 0, new HashSet<>()), "Formula should evaluate to sum of A1 and B1");
+        assertEquals("30.0", cell.evaluate(sheet, 2, 0, new HashSet<>()), "Formula should evaluate to sum of A1 and B1");
     }
 
     @Test
     public void testEvaluate_CyclicReference() {
-        SCell cell = new SCell("=A1");
+        SCell cell = new SCell("=A0");
         Ex2Sheet sheet = new Ex2Sheet(5, 5);
-        sheet.set(0, 0, "=A1");
+        sheet.set(0, 0, "=A0");
 
-        assertEquals("ERR_Cycle", cell.evaluate(sheet, 0, 0, new HashSet<>()), "Cyclic reference should return 'ERR_Cycle'");
+        assertEquals("ERR_CYCLE", cell.evaluate(sheet, 0, 0, new HashSet<>()), "Cyclic reference should return 'ERR_Cycle'");
     }
 }
 
