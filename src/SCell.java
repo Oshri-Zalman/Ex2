@@ -61,7 +61,7 @@ public class SCell implements Cell {
         if (isNumber(data)) {
             return NUMBER;
         }
-        // אם זה מתחיל ב-= אבל לא עובר את בדיקת תקינות הנוסחה
+
         if (data.startsWith("=")) {
             return isValidFormula(data) ? FORM : ERR_WRONG_FORM;
         }
@@ -84,12 +84,12 @@ public class SCell implements Cell {
 
         String expression = formula.substring(1).trim();
 
-        // בדיקה בסיסית שהביטוי לא ריק ולא מסתיים באופרטור
+
         if (expression.isEmpty() || "+-*/".contains(String.valueOf(expression.charAt(expression.length() - 1)))) {
             return false;
         }
 
-        // הפניה עצמית היא נוסחה תקינה (למרות שתגרום לשגיאת מחזוריות)
+
         if (expression.matches("[A-Za-z]\\d+")) {
             return true;
         }
@@ -113,7 +113,6 @@ public class SCell implements Cell {
     private String evaluateFormula(Ex2Sheet sheet, int currentX, int currentY, Set<String> visited) {
         String currentCell = getCellName(currentX, currentY);
 
-        // בדיקת הפניה עצמית ישירה
         String expression = data.substring(1).trim();
         if (expression.equalsIgnoreCase(currentCell)) {
             this.type = ERR_CYCLE_FORM;
@@ -145,7 +144,6 @@ public class SCell implements Cell {
 
     private String getCellName(int x, int y) {
         String cellName = String.valueOf((char) ('A' + x)) + (y);
-        System.out.println("Converting coordinates [" + x + "," + y + "] to cell name: " + cellName);
         return cellName;
     }
 
@@ -175,7 +173,7 @@ public class SCell implements Cell {
                     throw new IllegalArgumentException("Invalid reference: " + cellName);
                 }
 
-                // בדיקת הפניה עצמית
+
                 if (coords[0] == currentX && coords[1] == currentY) {
                     throw new IllegalArgumentException("cycle detected");
                 }
@@ -239,7 +237,7 @@ public class SCell implements Cell {
         LinkedList<Character> operators = new LinkedList<>();
         StringBuilder currentNumber = new StringBuilder();
 
-        // בדיקה אם הביטוי ריק
+
         if (expression == null || expression.trim().isEmpty()) {
             throw new IllegalArgumentException("Empty expression");
         }
@@ -278,7 +276,7 @@ public class SCell implements Cell {
                 throw new IllegalArgumentException("No valid numbers in expression");
             }
 
-            return numbers.getFirst();  // שימוש ב-getFirst במקום getLast
+            return numbers.getFirst();
         } catch (NoSuchElementException e) {
             throw new IllegalArgumentException("Invalid expression structure");
         }

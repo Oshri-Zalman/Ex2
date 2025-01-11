@@ -1474,7 +1474,7 @@ public final class StdDrawEx2 implements ActionListener, MouseListener, MouseMot
 		offscreen.rotate(Math.toRadians(+degrees), xs, ys);
 	}
 	////////////// Ex2 123456////////////////////
-	public static String getCell(Index2D cord, String input) {
+	public static String getCell(String cord, String input) {
 		var ans = JOptionPane.showInputDialog("Cell: "+cord+"= "+input,input);
 		var output = ans + " FORM!";
 		return ans;

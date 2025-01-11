@@ -6,7 +6,6 @@ public class Ex2Sheet implements Sheet {
     private final int width;
     private final int height;
 
-    // Constructors
     public Ex2Sheet(int width, int height) {
         this.width = width;
         this.height = height;
@@ -18,7 +17,6 @@ public class Ex2Sheet implements Sheet {
         this(Ex2Utils.WIDTH, Ex2Utils.HEIGHT);
     }
 
-    // Initialize the table with empty cells
     private void initializeTable() {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -93,7 +91,7 @@ public class Ex2Sheet implements Sheet {
         return depths;
     }
 
-    // Compute the depth for a specific cell
+
     private int computeDepth(int x, int y, boolean[][] visited) {
         if (!isIn(x, y) || visited[x][y]) {
             return -1;
@@ -119,12 +117,12 @@ public class Ex2Sheet implements Sheet {
         return maxDepth;
     }
 
-    // Parse references in the formula
+
     private String[] parseReferences(String formula) {
         return formula.split("[^A-Za-z0-9]");
     }
 
-    // Parse a cell reference to its coordinates
+
     public int[] parseEntry(String entry) {
         if (entry == null || entry.length() < 2) return null;
 
@@ -135,11 +133,8 @@ public class Ex2Sheet implements Sheet {
             int row = Integer.parseInt(rowPart) ;
             int col = column - 'A';
 
-            // הוספת הדפסת דיבאג
-            System.out.println("Parsing entry: " + entry + " to coordinates: [" + col + "," + row + "]");
 
             if (col < 0 || col >= width || row < 0 || row >= height) {
-                System.out.println("Invalid coordinates detected");
                 return null;
             }
 
@@ -169,7 +164,7 @@ public class Ex2Sheet implements Sheet {
     @Override
     public void load(String fileName) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            reader.readLine(); // Skip header
+            reader.readLine();
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -181,7 +176,6 @@ public class Ex2Sheet implements Sheet {
                         String data = parts[2];
                         set(x, y, data);
                     } catch (NumberFormatException e) {
-                        // Ignoring malformed lines
                     }
                 }
             }

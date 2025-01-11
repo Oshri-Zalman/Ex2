@@ -120,23 +120,28 @@ public class Ex2GUI {
 	 * @param xx the x coordinate of the required cell.
 	 * @param yy the y coordinate of the required cell.
 	 */
-	private static void inputCell(int xx,int yy) {
-		if(table.isIn(xx,yy)) {
-			Cell cc = table.get(xx,yy);
-			String ww = cord+": "+cc.toString()+" : ";
-			StdDrawEx2.text(Ex2Utils.GUI_X_START, Ex2Utils.MAX_X-1, ww);
+	private static void inputCell(int xx, int yy) {
+		if (table.isIn(xx, yy)) {
+			Cell cc = table.get(xx, yy);
+
+			String cellName = (char) ('A' + xx) + String.valueOf(yy);
+			String ww = cellName + ": " + cc.toString() + " : ";
+			StdDrawEx2.text(Ex2Utils.GUI_X_START, Ex2Utils.MAX_X - 1, ww);
 			StdDrawEx2.show();
-			if(Ex2Utils.Debug) {System.out.println(ww);}
-			String c = StdDrawEx2.getCell(cord,cc.getData());
-			String s1 = table.get(xx,yy).getData();
-			if(c==null) {
-				table.set(xx,yy,s1);
+
+			if (Ex2Utils.Debug) {
+				System.out.println(ww);
 			}
-			else {
+
+			String c = StdDrawEx2.getCell(cellName, cc.getData());
+			String s1 = table.get(xx, yy).getData();
+			if (c == null) {
+				table.set(xx, yy, s1);
+			} else {
 				table.set(xx, yy, c);
 				int[][] calc_d = table.depth();
 				if (calc_d[xx][yy] == Ex2Utils.ERR) {
-					table.get(xx,yy).setType(Ex2Utils.ERR_CYCLE_FORM);
+					table.get(xx, yy).setType(Ex2Utils.ERR_CYCLE_FORM);
 				}
 			}
 			table.eval();
