@@ -142,7 +142,6 @@ public class Ex2Sheet implements Sheet {
 
             return new int[]{col, row}; // Return the parsed coordinates
         } catch (NumberFormatException e) {
-            System.out.println("Failed to parse row number: " + rowPart); // Print error if row is invalid
             return null;
         }
     }

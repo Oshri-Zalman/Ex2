@@ -1,9 +1,4 @@
-/**
- * This class contains a set of constants for Ex2 (I2CS, ArielU 2025A),
- * As defined in: https://docs.google.com/document/d/1-18T-dj00apE4k1qmpXGOaqttxLn-Kwi/edit?usp=sharing&ouid=113711744349547563645&rtpof=true&sd=true
- * Do NOT change this class!
- *
- */
+
 public class Ex2Utils {
     public static final int TEXT=1, NUMBER=2, FORM=3, ERR_FORM_FORMAT=-2, ERR_CYCLE_FORM=-1, ERR=-1;
     public static final String ERR_CYCLE = "ERR_CYCLE!", ERR_FORM = "ERR_FORM!";

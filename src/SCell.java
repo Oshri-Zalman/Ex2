@@ -172,7 +172,7 @@ public class SCell implements Cell {
                 }
 
                 if (coords[0] == currentX && coords[1] == currentY) {
-                    throw new IllegalArgumentException("cycle detected"); // Detect self-referencing
+                    throw new IllegalArgumentException("cycle detected"); // Detect self referencing
                 }
 
                 SCell referencedCell = sheet.get(coords[0], coords[1]); // Get the referenced cell
@@ -187,7 +187,7 @@ public class SCell implements Cell {
                 result.append(cellValue); // Append the cell value to the formula
                 i += cellName.length(); // Move to the next part of the formula
             } else {
-                result.append(c); // Append non-reference characters
+                result.append(c); // Append non reference characters
                 i++;
             }
         }
