@@ -50,4 +50,5 @@ This project implements a simple spreadsheet system similar to Excel, supporting
 - ERR_FORM: Invalid formula syntax
 - ERR_CYCLE: Cyclic reference detected
 
+## Example of the SpreadSheet
   ![image](https://github.com/user-attachments/assets/3c53f235-c5aa-47ff-90c9-4f635c08cb46)
